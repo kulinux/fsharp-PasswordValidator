@@ -1,5 +1,5 @@
 ﻿namespace PasswordValidator
 
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module PasswordValidator =
+    let validate (password: string): bool =
+        password.Length > 8
