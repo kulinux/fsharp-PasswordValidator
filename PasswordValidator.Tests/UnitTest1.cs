@@ -4,7 +4,7 @@ namespace PasswordValidator.Tests;
 public class PasswordValidatorShould
 {
 
-    const string VALID_PASSWORD = "123aA45678";
+    const string VALID_PASSWORD = "123aA_5678";
 
     [TestMethod]
     public void ValidateWhenValidaPassword()
@@ -28,6 +28,12 @@ public class PasswordValidatorShould
     public void NotValidateThereAreNoLowerLetters()
     {
         Assert.AreEqual(false, PasswordValidator.validate(VALID_PASSWORD.ToUpper()));
+    }
+
+    [TestMethod]
+    public void NotValidateThereAreNoUnderscore()
+    {
+        Assert.AreEqual(false, PasswordValidator.validate(VALID_PASSWORD.Replace("_", "a")));
     }
 
 
