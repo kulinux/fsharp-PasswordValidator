@@ -79,3 +79,25 @@ public class PasswordValidatorTwoShould
     }
 
 }
+
+[TestClass]
+public class PasswordValidatorWithReason
+{
+    const string VALID_PASSWORD = "123aA5678";
+
+    private static Func<string, string> reason = PasswordValidator.reason(ValidationType.ValidationOne).Invoke;
+
+
+    [TestMethod]
+    public void WhenNoUnderscoreGiveTheReasonToFail()
+    {
+        Assert.AreEqual("Underscore", reason(VALID_PASSWORD.Replace("_", "a")));
+    }
+
+    [TestMethod]
+    public void WhenNotValidateThereAreNoCapitalLettersGiveTheReasonToFail()
+    {
+        Assert.AreEqual("Capital Letter", reason(VALID_PASSWORD.ToLower()));
+    }
+
+}
