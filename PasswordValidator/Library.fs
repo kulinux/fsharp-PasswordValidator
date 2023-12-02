@@ -70,11 +70,10 @@ module PasswordValidator =
 
         valids.Length = validations.Length
 
-    let reasonFailed (validations: ValidationResult list) (password: string) : string =
+    let reasonFailed (validations: ValidationResult list) (password: string) : string list =
             validations
             |> List.filter (fun pred -> pred.Validation password = false)
             |> List.map (fun pred -> pred.Reason)
-            |> List.head
 
 
     let private chooseValidation validationType : ValidationResult list =
@@ -85,5 +84,5 @@ module PasswordValidator =
     let validation validationType : ValidationType: string -> bool =
         validationType |> chooseValidation |> validate
 
-    let reason validationType : ValidationType: string -> string =
+    let reason validationType : ValidationType: string -> string list =
         validationType |> chooseValidation |> reasonFailed

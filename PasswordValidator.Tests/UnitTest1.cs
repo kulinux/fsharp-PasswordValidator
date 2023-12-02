@@ -85,19 +85,31 @@ public class PasswordValidatorWithReason
 {
     const string VALID_PASSWORD = "123aA5678";
 
-    private static Func<string, string> reason = PasswordValidator.reason(ValidationType.ValidationOne).Invoke;
+    //private static Func<string, string> reason = PasswordValidator.reason(ValidationType.ValidationOne);
+
+    private static List<string> reason(string password)
+    {
+        return PasswordValidator.reason(ValidationType.ValidationOne).Invoke(password).ToList<string>();
+    }
 
 
     [TestMethod]
     public void WhenNoUnderscoreGiveTheReasonToFail()
     {
-        Assert.AreEqual("Underscore", reason(VALID_PASSWORD.Replace("_", "a")));
+        Assert.AreEqual("Underscore", reason(VALID_PASSWORD.Replace("_", "a"))[0]);
     }
 
     [TestMethod]
     public void WhenNotValidateThereAreNoCapitalLettersGiveTheReasonToFail()
     {
-        Assert.AreEqual("Capital Letter", reason(VALID_PASSWORD.ToLower()));
+        Assert.AreEqual("Capital Letter", reason(VALID_PASSWORD.ToLower())[0]);
+    }
+
+
+    [TestMethod]
+    public void WhenSeveralReason()
+    {
+        CollectionAssert.AreEquivalent(new List<string>(new string[] { "Underscore", "Capital Letter" }), reason(VALID_PASSWORD.ToLower()));
     }
 
 }
