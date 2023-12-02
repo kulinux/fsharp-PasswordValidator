@@ -71,21 +71,19 @@ module PasswordValidator =
         valids.Length = validations.Length
 
     let reasonFailed (validations: ValidationResult list) (password: string) : string =
-        let valids =
             validations
             |> List.filter (fun pred -> pred.Validation password = false)
             |> List.map (fun pred -> pred.Reason)
+            |> List.head
 
-        valids.Head
 
-
-    let validation (validationType: ValidationType) : string -> bool =
+    let private chooseValidation validationType : ValidationResult list =
         match validationType with
-        | ValidationOne -> validate (PasswordValidatorTypeOne.validations)
-        | ValidationTwo -> validate (PasswordValidatorTypeTwo.validations)
+        | ValidationOne -> PasswordValidatorTypeOne.validations
+        | ValidationTwo -> PasswordValidatorTypeTwo.validations
 
+    let validation validationType : ValidationType: string -> bool =
+        validationType |> chooseValidation |> validate
 
-    let reason (validationType: ValidationType) : string -> string =
-        match validationType with
-        | ValidationOne -> reasonFailed (PasswordValidatorTypeOne.validations)
-        | ValidationTwo -> reasonFailed (PasswordValidatorTypeTwo.validations)
+    let reason validationType : ValidationType: string -> string =
+        validationType |> chooseValidation |> reasonFailed
