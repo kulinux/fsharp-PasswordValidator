@@ -6,29 +6,48 @@ type ValidationType =
     | ValidationOne
     | ValidationTwo
 
+module private Validations =
+    let validLength (length: int) (password: string) : bool = password.Length > length
+
+    let containsCapitalLetters (password: string) : bool = password |> String.exists Char.IsUpper
+
+    let containsLowerLetters (password: string) : bool = password |> String.exists Char.IsLower
+
+    let containsUnderscore (password: string) : bool =
+        password |> String.exists (fun (c: char) -> c = '_')
+
 
 module private PasswordValidatorTypeOne =
 
-    let private containsCapitalLetters (password: string) : bool = password |> String.exists Char.IsUpper
+    open Validations
 
-    let private containsLowerLetters (password: string) : bool = password |> String.exists Char.IsLower
+    let validations =
+        [ validLength 8
+          containsCapitalLetters
+          containsLowerLetters
+          containsUnderscore ]
 
-    let private containsUnderscore (password: string) : bool =
-        password |> String.exists (fun (c: char) -> c = '_')
 
-    let private validLength (password: string) : bool = password.Length > 8
+module private PasswordValidatorTypeTwo =
 
-    let validate (password: string) : bool =
-        let validations =
-            [ validLength
-              containsCapitalLetters
-              containsLowerLetters
-              containsUnderscore ]
+    open Validations
 
+    let validations =
+        [ validLength 6
+          containsCapitalLetters
+          containsLowerLetters
+          containsUnderscore ]
+
+
+
+module PasswordValidator =
+    let validate (validations: (string -> bool) list) (password: string) : bool =
         let valids = validations |> List.filter (fun pred -> pred password)
 
         valids.Length = validations.Length
 
 
-module PasswordValidator =
-    let validation (validationType: ValidationType): string -> bool = PasswordValidatorTypeOne.validate
+    let validation (validationType: ValidationType) : string -> bool =
+        match validationType with
+        | ValidationOne -> validate (PasswordValidatorTypeOne.validations)
+        | ValidationTwo -> validate (PasswordValidatorTypeTwo.validations)

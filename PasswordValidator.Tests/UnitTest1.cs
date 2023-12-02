@@ -10,7 +10,7 @@ public class PasswordValidatorOneShould
     private static Func<string, bool> validate = PasswordValidator.validation(ValidationType.ValidationOne).Invoke;
 
     [TestMethod]
-    public void ValidateWhenValidaPassword()
+    public void ValidateWhenValidPassword()
     {
         Assert.AreEqual(true, validate(VALID_PASSWORD));
     }
@@ -24,7 +24,7 @@ public class PasswordValidatorOneShould
     [TestMethod]
     public void NotValidateThereAreNoCapitalLetters()
     {
-        Assert.AreEqual(false, validate.Invoke(VALID_PASSWORD.ToLower()));
+        Assert.AreEqual(false, validate(VALID_PASSWORD.ToLower()));
     }
 
     [TestMethod]
@@ -38,7 +38,44 @@ public class PasswordValidatorOneShould
     {
         Assert.AreEqual(false, validate(VALID_PASSWORD.Replace("_", "a")));
     }
+}
 
 
+[TestClass]
+public class PasswordValidatorTwoShould
+{
+    const string VALID_PASSWORD = "123aA_5";
+
+    private static Func<string, bool> validate = PasswordValidator.validation(ValidationType.ValidationTwo).Invoke;
+
+    [TestMethod]
+    public void ValidateWhenValidPassword()
+    {
+        Assert.AreEqual(true, validate(VALID_PASSWORD));
+    }
+
+    [TestMethod]
+    public void NotValidateWhenHasMoreThanSixCharacters()
+    {
+        Assert.AreEqual(false, validate(VALID_PASSWORD.Substring(0, 5)));
+    }
+
+    [TestMethod]
+    public void NotValidateThereAreNoCapitalLetters()
+    {
+        Assert.AreEqual(false, validate(VALID_PASSWORD.ToLower()));
+    }
+
+    [TestMethod]
+    public void NotValidateThereAreNoLowerLetters()
+    {
+        Assert.AreEqual(false, validate(VALID_PASSWORD.ToUpper()));
+    }
+
+    [TestMethod]
+    public void NotValidateThereAreNoUnderscore()
+    {
+        Assert.AreEqual(false, validate(VALID_PASSWORD.Replace("_", "a")));
+    }
 
 }
